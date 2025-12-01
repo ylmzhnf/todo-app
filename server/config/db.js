@@ -9,6 +9,10 @@ const db = new pg.Client({
   password: process.env.PG_PASSWORD,
   port: process.env.PG_PORT,
 });
-db.connect();
+
+db.connect().catch((err) => {
+  console.error("Database connection error:", err);
+  process.exit(1);
+});
 
 export default db;

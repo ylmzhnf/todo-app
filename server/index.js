@@ -4,6 +4,7 @@ import env from "dotenv";
 import todoRoutes from "./routes/todoRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 
+env.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,7 +12,6 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(cors());
 app.use(express.json());
-env.config();
 app.use(express.urlencoded({ extended: true }));
 
 

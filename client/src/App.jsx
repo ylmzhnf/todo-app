@@ -1,22 +1,34 @@
 import React from "react";
-import TodoList from "./component/TodoList";
-import Header from "./component/Header";
-import Input from "./component/Input";
-import Footer from "./component/Footer";
+import {BrowserRouter as Router, Routes, Route, Navigate} from "react-router-dom";
+import AuthProvider from "./context/AuthContext";
+import ProtectedRoute from "./component/ProtectedRoute";
+
+//sayfalar
 import Login from "./component/pages/Login";
 import Register from "./component/pages/Register";
+import TodoPage from "./component/pages/TodoPage";
 
 function App() {
-  return (
-    <>
-      <main className="container">
-        <Header />
-        <Input />
-        <TodoList />
-        <Footer />
-        <p className="drag-drop-hint">Drag and drop to reorder list</p>
-      </main>
-    </>
+  return(
+    <AuthProvider>{/*Tum uygulamayi sarmalar */}
+      <Router>
+        <Routes>
+          {/*herkese acik rotalar */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+
+          {/*Korumali rota */}
+          <Route path="/" element={
+            <ProtectedRoute>
+              <TodoPage/>
+            </ProtectedRoute>
+          } />
+
+          {/*bilinmeyen rotalari logine at */}
+          <Route path="*" element={<Navigate to="/login"/>} /> 
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

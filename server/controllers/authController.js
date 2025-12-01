@@ -14,22 +14,21 @@ export const register = async (req, res) => {
     if (checkResult.rows.length > 0) {
       res.status(409).json("User already exists");
     } else {
-      bcrypt.hash(password, saltRounds, async (err, hash) => {
-        if (err) {
-          console.error("Error hashing password: ", err);
-          res.status(500).json("Internal server error");
-        } else {
-          console.log("Hashed password: ", hash);
-          await db.query(
-            "INSERT INTO users (username , email, password_hash) VALUES ($1,$2,$3)",
-            [username, email, hash]
-          );
-          res.status(201).json({
-            message: "Kayıt başarılı",
-            user: checkResult.rows[0],
-          });
-        }
-      });
+      try {
+        const hash = await bcrypt.hash(password, saltRounds);
+        const insertResult = await db.query(
+          "INSERT INTO users (username , email, password_hash) VALUES ($1,$2,$3) RETURNING id, username, email",
+          [username, email, hash]
+        );
+        const createdUser = insertResult.rows[0];
+        res.status(201).json({
+          message: "Kayıt başarılı",
+          user: createdUser,
+        });
+      } catch (hashErr) {
+        console.error("Error hashing or inserting user: ", hashErr);
+        res.status(500).json("Internal server error");
+      }
     }
   } catch (error) {
     console.error("Error during registration: ", error);
@@ -47,7 +46,7 @@ export const login = async (req, res) => {
       return res.status(401).json({ error: "E-posta veya şifre yanlış." });
     }
     const user = userResult.rows[0];
-    const storedHashedPassword = user.password;
+    const storedHashedPassword = user.password_hash;
     const isMatch = await bcrypt.compare(password, storedHashedPassword);
     if (!isMatch) {
       return res.status(401).json({ error: "E-posta veya şifre yanlış." });
