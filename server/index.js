@@ -12,12 +12,7 @@ const isProduction = process.env.NODE_ENV === "production";
 
 // CORS Ayarı
 const corsOptions = {
-  origin: isProduction
-    ? [
-        "https://your-vercel-domain.vercel.app",
-        "https://your-custom-domain.com"
-      ]
-    : "http://localhost:5174",
+  origin: "*",
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
