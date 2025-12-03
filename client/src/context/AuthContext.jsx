@@ -1,4 +1,4 @@
-//Kullanıcı giriş kontrol merkezi
+// User login control center
 import React, { createContext, useEffect, useState } from "react";
 import api from "../api/axios.js";
 
@@ -7,45 +7,71 @@ export const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(true);
 
-  //uygulama ilk acildiginda token var mi kontrol et
+  // Check if token exists and dark mode preference when app starts
   useEffect(() => {
     const checkLoggedIn = async () => {
       const token = localStorage.getItem("token");
       if (token) {
-        //token varsa kullanici varmis gibi davran (istersen burda /me endpoint ile dogrulama yapanilirsin)
-        //simdilik basitce token varsa giris yapmis sayiyoruz.
         setUser({ token });
       }
+      
+      // Load dark mode preference
+      const darkModePref = localStorage.getItem("darkMode");
+      if (darkModePref !== null) {
+        setIsDarkMode(JSON.parse(darkModePref));
+      }
+      
       setLoading(false);
     };
     checkLoggedIn();
   }, []);
-  //giris fonksiyonu
+
+  // Apply dark/light mode to document
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.setAttribute("data-theme", "dark");
+    } else {
+      document.documentElement.setAttribute("data-theme", "light");
+    }
+    localStorage.setItem("darkMode", JSON.stringify(isDarkMode));
+  }, [isDarkMode]);
+
+  // Toggle dark mode
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+  };
+  // Login function
   const login = async (email, password) => {
     const res = await api.post("/auth/login", { email, password });
-    //backendden gelen token kaydet
+    // Save token from backend
     localStorage.setItem("token", res.data.token);
-    setUser({token: res.data.token, ...res.data.user});
+    setUser({
+      token: res.data.token,
+      id: res.data.userId,
+      username: res.data.username,
+      email: email
+    });
     return res.data;
   };
 
-  //kayit fonksiyonu
-  const register =async (username, email, password) => {
-    const res = await api.post("/auth/register", {username, email, password});
+  // Register function
+  const register = async (username, email, password) => {
+    const res = await api.post("/auth/register", { username, email, password });
     return res.data;
   };
 
-  //cikis fonksiyonu
-  const logout =() => {
+  // Logout function
+  const logout = () => {
     localStorage.removeItem("token");
     setUser(null);
   };
 
   return (
-     <AuthContext.Provider value={{user , login, register, logout, loading}}>
-        {children}
-     </AuthContext.Provider>
+    <AuthContext.Provider value={{ user, login, register, logout, loading, isDarkMode, toggleDarkMode }}>
+      {children}
+    </AuthContext.Provider>
   );
 
 };

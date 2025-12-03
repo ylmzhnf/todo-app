@@ -3,7 +3,7 @@ import { AuthContext } from "../../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 
 
-function Register() { 
+function Register() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -11,7 +11,7 @@ function Register() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState('');
 
-  const {register} = useContext(AuthContext);
+  const { register } = useContext(AuthContext);
   const navigate = useNavigate();
 
 
@@ -20,23 +20,23 @@ function Register() {
     setError("");
     setSuccess("");
 
-    // Şifre eşleşme kontrolü (Frontend validasyonu)
+    // Password match check (Frontend validation)
     if (password !== confirmPassword) {
-      return setError('Hata: Şifreler eşleşmiyor!');
+      return setError('Error: Passwords do not match!');
     }
-    
-    // Backend'e göndereceğimiz şifreler boş olmamalı
+
+    // Passwords sent to backend must not be empty
     if (password.length < 6) {
-        return setError('Şifre en az 6 karakter olmalıdır.');
+      return setError('Password must be at least 6 characters.');
     }
-    // Kayıt işlemi burada gerçekleştirilecek
+    // Registration process happens here
     try {
       await register(username, email, password);
       setTimeout(() => navigate('/login'), 1500);
-      setSuccess('Kayıt başarılı! Şimdi giriş yapabilirsiniz.');
+      setSuccess('Registration successful! You can now login.');
     } catch (error) {
-      const msg = err.response?.data?.error || 'Kayıt sırasında bir hata oluştu.';
-      setError(msg);
+      const msg = error.response?.data?.error || error.response?.data?.message || 'An error occurred during registration.';
+      setError(typeof msg === 'string' ? msg : 'An error occurred during registration.');
     }
   }
   return (
@@ -46,54 +46,54 @@ function Register() {
       </div>
 
       <form onSubmit={handleSubmit} className="auth-form">
-        <h2>Kayıt Ol</h2>
-        {error && <p style={{color:"red", textAlign:"center"}}>{error}</p>}
+        <h2>Register</h2>
+        {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
         {success && <p style={{ color: 'var(--blue-500)', textAlign: 'center' }}>{success}</p>}
-        {/* Ad Alanı */}
+        {/* Name Field */}
         <input
-        onChange={(e)=>{setUsername(e.target.value)}}
+          onChange={(e) => { setUsername(e.target.value) }}
           type="text"
-          placeholder="Adınız ve Soyadınız"
+          placeholder="Full Name"
           className="auth-input"
           value={username}
           required
         />
-        
-        {/* E-posta Alanı */}
+
+        {/* Email Field */}
         <input
-        onChange={(e)=>{setEmail(e.target.value)}}
-        value={email}
+          onChange={(e) => { setEmail(e.target.value) }}
+          value={email}
           type="email"
-          placeholder="E-posta Adresi"
-          className="auth-input"
-          required
-        />
-        
-        {/* Şifre Alanı */}
-        <input
-        onChange={(e)=>{setPassword(e.target.value)}}
-        value={password}
-          type="password"
-          placeholder="Şifre Oluştur"
+          placeholder="Email Address"
           className="auth-input"
           required
         />
 
-        {/* Şifre Tekrar Alanı */}
+        {/* Password Field */}
         <input
-        onChange={(e)=>{setConfirmPassword(e.target.value)}}
-        value={confirmPassword}
+          onChange={(e) => { setPassword(e.target.value) }}
+          value={password}
           type="password"
-          placeholder="Şifreyi Tekrar Girin"
+          placeholder="Create Password"
+          className="auth-input"
+          required
+        />
+
+        {/* Confirm Password Field */}
+        <input
+          onChange={(e) => { setConfirmPassword(e.target.value) }}
+          value={confirmPassword}
+          type="password"
+          placeholder="Confirm Password"
           className="auth-input"
           reaquired
         />
-        
-        <button type="submit" className="auth-button">Hesap Oluştur</button>
+
+        <button type="submit" className="auth-button">Create Account</button>
       </form>
 
       <p className="auth-link-text">
-        Zaten hesabın var mı? <Link to="/login">Giriş Yap</Link>
+        Already have an account? <Link to="/login">Login</Link>
       </p>
     </div>
   );

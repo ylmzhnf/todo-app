@@ -1,22 +1,29 @@
-# Frontend Mentor - Todo app
+# Frontend Mentor - Todo App Solution (Full Stack Edition)
 
-![Design preview for the Todo app coding challenge](preview.jpg)
+This is a solution to the [Todo app challenge on Frontend Mentor](https://www.frontendmentor.io/challenges/todo-app-Su1_KokOW). Frontend Mentor challenges help you improve your coding skills by building realistic projects.
 
-## Welcome! 👋
+**🚀 I took this challenge a step further by converting it into a secure Full-Stack Application with a real Database.**
 
-Thanks for checking out this front-end coding challenge.
+## Table of contents
 
-[Frontend Mentor](https://www.frontendmentor.io) challenges help you improve your coding skills by building realistic projects.
+- [Overview](#overview)
+  - [The challenge](#the-challenge)
+  - [Screenshot](#screenshot)
+  - [Links](#links)
+- [My process](#my-process)
+  - [Built with](#built-with)
+  - [Project Structure](#project-structure)
+  - [Database Setup](#database-setup)
+  - [API Endpoints](#api-endpoints)
+  - [What I learned](#what-i-learned)
+- [Author](#author)
+- [Acknowledgments](#acknowledgments)
 
-**To do this challenge, you need a good understanding of HTML, CSS and JavaScript.**
+## Overview
 
-## The challenge
+### The challenge
 
-Your challenge is to build out this todo app and get it looking as close to the design as possible.
-
-You can use any tools you like to help you complete the challenge. So if you've got something you'd like to practice, feel free to give it a go.
-
-Your users should be able to:
+Users should be able to:
 
 - View the optimal layout for the app depending on their device's screen size
 - See hover states for all interactive elements on the page
@@ -28,72 +35,123 @@ Your users should be able to:
 - Toggle light and dark mode
 - **Bonus**: Drag and drop to reorder items on the list
 
-Want some support on the challenge? [Join our community](https://www.frontendmentor.io/community) and ask questions in the **#help** channel.
+**🔥 Full-Stack Features I Added:**
+- **User Authentication**: Secure Register & Login system using `bcrypt` and `JWT`.
+- **Persistent Data**: Data is stored in a **PostgreSQL** database (CRUD operations).
+- **Protected Routes**: Restricting access to the dashboard for unauthenticated users.
+- **Multi-User Support**: Each user sees only their own todos.
+- **Axios Interceptors**: Automatically attaching JWT tokens to every request.
 
-## Where to find everything
+### Screenshot
 
-Your task is to build out the project to the designs inside the `/design` folder. You will find both a mobile and a desktop version of the design.
+![](./screenshot.jpg)
+*(Note: Please add a screenshot of your project here)*
 
-The designs are in JPG static format. Using JPGs will mean that you'll need to use your best judgment for styles such as `font-size`, `padding` and `margin`.
+### Links
 
-If you would like the Figma design file to inspect the design in more detail, you can [subscribe as a PRO member](https://www.frontendmentor.io/pro).
+- Solution URL: [Add your solution URL here](https://your-solution-url.com)
+- Live Site URL: [Add your live site URL here](https://your-live-site-url.com)
 
-You will find all the required assets in the `/images` folder. The assets are already optimized.
+## My process
 
-There is also a `style-guide.md` file containing the information you'll need, such as color palette and fonts.
+### Built with
 
-## Building your project
+**Frontend:**
+- [React](https://reactjs.org/) - JS Library (v19)
+- [Vite](https://vitejs.dev/) - Build tool
+- [Axios](https://axios-http.com/) - HTTP Client
+- [React Router](https://reactrouter.com/) - Navigation (v7)
+- CSS Custom Properties (Variables)
+- Flexbox & Grid
 
-Feel free to use any workflow that you feel comfortable with. Below is a suggested process, but do not feel like you need to follow these steps:
+**Backend:**
+- [Node.js](https://nodejs.org/) - Runtime environment
+- [Express](https://expressjs.com/) - Web framework (v5)
+- [PostgreSQL](https://www.postgresql.org/) - Relational Database
+- [node-postgres (pg)](https://node-postgres.com/) - PostgreSQL client
+- [Bcrypt](https://www.npmjs.com/package/bcrypt) - Password hashing
+- [JSON Web Token (JWT)](https://jwt.io/) - Authentication
 
-1. Initialize your project as a public repository on [GitHub](https://github.com/). Creating a repo will make it easier to share your code with the community if you need help. If you're not sure how to do this, [have a read-through of this Try Git resource](https://try.github.io/).
-2. Configure your repository to publish your code to a web address. This will also be useful if you need some help during a challenge as you can share the URL for your project with your repo URL. There are a number of ways to do this, and we provide some recommendations below.
-3. Look through the designs to start planning out how you'll tackle the project. This step is crucial to help you think ahead for CSS classes to create reusable styles.
-4. Before adding any styles, structure your content with HTML. Writing your HTML first can help focus your attention on creating well-structured content.
-5. Write out the base styles for your project, including general content styles, such as `font-family` and `font-size`.
-6. Start adding styles to the top of the page and work down. Only move on to the next section once you're happy you've completed the area you're working on.
+### Project Structure
 
-## Deploying your project
+```text
+todo-app-fullstack/
+├── client/                # 🎨 FRONTEND (React)
+│   ├── src/
+│   │   ├── api/           # Axios interceptors configuration
+│   │   ├── components/    # Header, Input, TodoList, Footer
+│   │   ├── context/       # AuthContext for global state
+│   │   ├── pages/         # Login, Register, TodoPage
+│   │   └── App.jsx        # Routing and Protected Routes
+│   └── ...
+│
+└── server/                # ⚙️ BACKEND (Node.js/Express)
+    ├── config/            # Database connection (db.js)
+    ├── controllers/       # Business logic (auth & todo logic)
+    ├── middleware/        # JWT Authentication middleware
+    ├── routes/            # API Routes definitions
+    └── index.js           # Server entry point
+```
 
-As mentioned above, there are many ways to host your project for free. Our recommended hosts are:
+#### Database Setup
+To run this project locally, you need to set up a PostgreSQL database. Run these SQL commands in your query tool (pgAdmin or terminal):
 
-- [GitHub Pages](https://pages.github.com/)
-- [Vercel](https://vercel.com/)
-- [Netlify](https://www.netlify.com/)
+```sql
+CREATE DATABASE todo_app;
 
-You can host your site using one of these solutions or any of our other trusted providers. [Read more about our recommended and trusted hosts](https://medium.com/frontend-mentor/frontend-mentor-trusted-hosting-providers-bf000dfebe).
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(255) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-## Create a custom `README.md`
+CREATE TABLE todos (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  content TEXT NOT NULL,
+  is_completed BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-We strongly recommend overwriting this `README.md` with a custom one. We've provided a template inside the [`README-template.md`](./README-template.md) file in this starter code.
+CREATE INDEX idx_todos_user_id ON todos(user_id);
+```
 
-The template provides a guide for what to add. A custom `README` will help you explain your project and reflect on your learnings. Please feel free to edit our template as much as you like.
+### API Endpoints
 
-Once you've added your information to the template, delete this file and rename the `README-template.md` file to `README.md`. That will make it show up as your repository's README file.
+| Method | Endpoint | Description | Auth Required |
+| :--- | :--- | :--- | :---: |
+| `POST` | `/auth/register` | Register a new user | ❌ |
+| `POST` | `/auth/login` | Login and receive JWT | ❌ |
+| `GET` | `/todos` | Get all todos for logged user | ✅ |
+| `POST` | `/todos` | Create a new todo | ✅ |
+| `PUT` | `/todos/:id` | Update todo status (toggle) | ✅ |
+| `DELETE` | `/todos/:id` | Delete a todo | ✅ |
 
-## Submitting your solution
+### What I learned
 
-Submit your solution on the platform for the rest of the community to see. Follow our ["Complete guide to submitting solutions"](https://medium.com/frontend-mentor/a-complete-guide-to-submitting-solutions-on-frontend-mentor-ac6384162248) for tips on how to do this.
+This project was a major milestone in my journey from Frontend to Full-Stack development. Here are the key concepts I mastered:
 
-Remember, if you're looking for feedback on your solution, be sure to ask questions when submitting it. The more specific and detailed you are with your questions, the higher the chance you'll get valuable feedback from the community.
+1.  **Separation of Concerns:** I learned how to separate the "View" (React) from the "Logic/Data" (Node.js API).
+2.  **Stateless Architecture:** Understanding that the server doesn't remember the user, so we must send a "Token" with every request.
+3.  **Security:** I learned never to store plain-text passwords. I used `bcrypt` to hash them and `JWT` to manage sessions securely.
+4.  **Protected Routes:** Implementing a logic in React that redirects unauthenticated users to the login page.
 
-## Sharing your solution
+**Code Snippet - Axios Interceptor for Automatic Token Injection:**
 
-There are multiple places you can share your solution:
+```javascript
+api.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => Promise.reject(error)
+);
+```
+## Author
 
-1. Share your solution page in the **#finished-projects** channel of the [community](https://www.frontendmentor.io/community).
-2. Tweet [@frontendmentor](https://twitter.com/frontendmentor) and mention **@frontendmentor**, including the repo and live URLs in the tweet. We'd love to take a look at what you've built and help share it around.
-3. Share your solution on other social channels like LinkedIn.
-4. Blog about your experience building your project. Writing about your workflow, technical choices, and talking through your code is a brilliant way to reinforce what you've learned. Great platforms to write on are [dev.to](https://dev.to/), [Hashnode](https://hashnode.com/), and [CodeNewbie](https://community.codenewbie.org/).
-
-We provide templates to help you share your solution once you've submitted it on the platform. Please do edit them and include specific questions when you're looking for feedback.
-
-The more specific you are with your questions the more likely it is that another member of the community will give you feedback.
-
-## Got feedback for us?
-
-We love receiving feedback! We're always looking to improve our challenges and our platform. So if you have anything you'd like to mention, please email hi@frontendmentor.io.
-
-This challenge is completely free. Please share it with anyone who will find it useful for practice.
-
-**Have fun building!** 🚀
+- Frontend Mentor - [@ylmzhnf](https://www.frontendmentor.io/profile/ylmzhnf)

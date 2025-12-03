@@ -5,19 +5,19 @@ import { useNavigate, Link } from "react-router-dom";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] =useState("");
+  const [error, setError] = useState("");
 
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) =>{
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     try {
       await login(email, password);
       navigate("/");
     } catch (error) {
-      setError("Giriş başarısız. Lütfen bilgilerinizi kontrol edin.");
+      setError("Login failed. Please check your credentials.");
     }
   }
 
@@ -28,38 +28,38 @@ function Login() {
       </div>
 
       <form onSubmit={handleSubmit} className="auth-form">
-        <h2>Giriş Yap</h2>
-        {error && <p style={{color:"red", textAlign:"center"}}>{error}</p>}
+        <h2>Login</h2>
+        {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
 
-        {/* E-posta Alanı */}
+        {/* Email Field */}
         <input
           onChange={(e) => {
             setEmail(e.target.value);
           }}
           type="email"
-          placeholder="E-posta Adresi"
+          placeholder="Email Address"
           className="auth-input"
           value={email}
         />
 
-        {/* Şifre Alanı */}
+        {/* Password Field */}
         <input
           onChange={(e) => {
             setPassword(e.target.value);
           }}
           type="password"
-          placeholder="Şifre"
+          placeholder="Password"
           className="auth-input"
           value={password}
         />
 
         <button type="submit" className="auth-button">
-          Giriş Yap
+          Login
         </button>
       </form>
 
       <p className="auth-link-text">
-        Hesabın yok mu? <Link to="/register">Kayıt Ol</Link>
+        Don't have an account? <Link to="/register">Register</Link>
       </p>
     </div>
   );

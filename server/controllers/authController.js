@@ -22,7 +22,7 @@ export const register = async (req, res) => {
         );
         const createdUser = insertResult.rows[0];
         res.status(201).json({
-          message: "Kayıt başarılı",
+          message: "Registration successful",
           user: createdUser,
         });
       } catch (hashErr) {
@@ -43,20 +43,20 @@ export const login = async (req, res) => {
       email,
     ]);
     if (userResult.rows.length === 0) {
-      return res.status(401).json({ error: "E-posta veya şifre yanlış." });
+      return res.status(401).json({ error: "Invalid email or password." });
     }
     const user = userResult.rows[0];
     const storedHashedPassword = user.password_hash;
     const isMatch = await bcrypt.compare(password, storedHashedPassword);
     if (!isMatch) {
-      return res.status(401).json({ error: "E-posta veya şifre yanlış." });
+      return res.status(401).json({ error: "Invalid email or password." });
     }
 
     const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
       expiresIn: "1h",
     });
     res.json({
-      message: "Giriş başarılı",
+      message: "Login successful",
       token: token,
       userId: user.id,
       username: user.username,

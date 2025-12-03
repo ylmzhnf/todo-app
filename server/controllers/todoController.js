@@ -1,62 +1,78 @@
 import db from "../config/db.js";
 
-//tüm görevleri döndürür
+// Returns all todos
 export const getAllTodos = async (req, res) => {
-  //user_id ve is_compeleted filteresinin dinamik olarak alınması gerekiyor. Şimdilik sabit değerler kullanıldı.
   try {
+    const userId = req.userId;
     const result = await db.query(
-      "SELECT id, content, is_completed FROM todos WHERE user_id=1 AND is_completed=false ORDER BY  id ASC"
-    );
+      "SELECT * FROM todos WHERE user_id=$1 ORDER BY created_at DESC",
+      [userId]);
     res.json(result.rows);
   } catch (error) {
-    console.error("Veritabanı hatası:", error);
-    return res.status(500).json({ error: "Veritabanı hatası" });
+    console.error("Database error:", error);
+    return res.status(500).json({ error: "Database error" });
   }
-
-  console.log("GET /todos isteği geldi.");
 };
 
-// Yeni görev ekler
+// Adds new todo
 export const createTodo = async (req, res) => {
-  //user_id ,content ve is_completed değerlerinin dinamik olarak alınması gerekiyor. Şimdilik sabit değerler kullanıldı.
+  const { content } = req.body;
+  const userId = req.userId;
+
+  if (!content || content.trim() === "") {
+    return res.status(400).json({ error: "Content is required" });
+  }
   try {
     const result = await db.query(
-      "INSERT INTO todos (user_id, content ,is_completed)VALUES (1, 'This is a content', false) RETURNING *"
+      "INSERT INTO todos (user_id, content, is_completed) VALUES ($1, $2, FALSE) RETURNING *",
+      [userId, content]
     );
-    res.json(result.rows);
+    res.status(201).json(result.rows[0]);
   } catch (error) {
-    console.error("Veritabanı hatası:", error);
-    return res.status(500).json({ error: "Veritabanı hatası" });
+    console.error("Database error:", error);
+    return res.status(500).json({ error: "Database error" });
   }
 };
 
-// Görevi günceller
-
+// Updates todo
 export const updateTodo = async (req, res) => {
-  //user_id ve id, is_completed değerlerinin dinamik olarak alınması gerekiyor. Şimdilik sabit değerler kullanıldı.
+  const { id } = req.params;
+  const { is_completed } = req.body;
+  const userId = req.userId;
+
   try {
     const result = await db.query(
-      "UPDATE todos SET  is_completed=TRUE WHERE id=2 AND user_id=1 RETURNING *"
+      "UPDATE todos SET is_completed = $1 WHERE id = $2 AND user_id = $3 RETURNING *",
+      [is_completed, id, userId]
     );
-    res.json(result.rows);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Todo not found" });
+    }
+    res.json(result.rows[0]);
   } catch (error) {
-    console.error("Veritabanı hatası:", error);
-    return res.status(500).json({ error: "Veritabanı hatası" });
+    console.error("Database error:", error);
+    return res.status(500).json({ error: "Database error" });
   }
 };
 
-// Görevi siler
-
+// Deletes todo
 export const deleteTodo = async (req, res) => {
-  //user_id ve id değerlerinin dinamik olarak alınması gerekiyor. Şimdilik sabit değerler kullanıldı.
+  const { id } = req.params;
+  const userId = req.userId;
   try {
     const result = await db.query(
-      "DELETE FROM todos WHERE id=2 AND user_id = 1"
+      "DELETE FROM todos WHERE id=$1 AND user_id=$2 RETURNING *",
+      [id, userId]
     );
-    res.json(result.rows);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Todo not found" });
+    }
+
+    res.json({ message: "Todo successfully deleted", deleteTodo: result.rows[0] });
   } catch (error) {
-    console.error("Veritabanı hatası:", error);
-    return res.status(500).json({ error: "Veritabanı hatası" });
+    console.error("Database error:", error);
+    return res.status(500).json({ error: "Database error" });
   }
 };
 

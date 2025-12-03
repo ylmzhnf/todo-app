@@ -1,31 +1,31 @@
 import React from "react";
-import {BrowserRouter as Router, Routes, Route, Navigate} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import AuthProvider from "./context/AuthContext";
 import ProtectedRoute from "./component/ProtectedRoute";
 
-//sayfalar
+// Pages
 import Login from "./component/pages/Login";
 import Register from "./component/pages/Register";
 import TodoPage from "./component/pages/TodoPage";
 
 function App() {
-  return(
-    <AuthProvider>{/*Tum uygulamayi sarmalar */}
+  return (
+    <AuthProvider>{/* Wraps the entire application */}
       <Router>
         <Routes>
-          {/*herkese acik rotalar */}
+          {/* Public routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
-          {/*Korumali rota */}
+          {/* Protected route */}
           <Route path="/" element={
             <ProtectedRoute>
-              <TodoPage/>
+              <TodoPage />
             </ProtectedRoute>
           } />
 
-          {/*bilinmeyen rotalari logine at */}
-          <Route path="*" element={<Navigate to="/login"/>} /> 
+          {/* Redirect unknown routes to login */}
+          <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
       </Router>
     </AuthProvider>
