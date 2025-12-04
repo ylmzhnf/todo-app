@@ -49,8 +49,7 @@ Users should be able to:
 
 ### Links
 
-- Solution URL: [Add your solution URL here](https://your-solution-url.com)
-- Live Site URL: [Add your live site URL here](https://your-live-site-url.com)
+- Live Site URL: [ live site URL](https://todo-app-jade-three-77.vercel.app/login)
 
 ## My process
 
