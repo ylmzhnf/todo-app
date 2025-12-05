@@ -8,7 +8,6 @@ This is a solution to the [Todo app challenge on Frontend Mentor](https://www.fr
 
 - [Overview](#overview)
   - [The challenge](#the-challenge)
-  - [Screenshot](#screenshot)
   - [Links](#links)
 - [My process](#my-process)
   - [Built with](#built-with)
@@ -42,10 +41,7 @@ Users should be able to:
 - **Multi-User Support**: Each user sees only their own todos.
 - **Axios Interceptors**: Automatically attaching JWT tokens to every request.
 
-### Screenshot
 
-![](./screenshot.jpg)
-*(Note: Please add a screenshot of your project here)*
 
 ### Links
 
